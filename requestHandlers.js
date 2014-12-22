@@ -1,3 +1,5 @@
+var Base64 = require('base64');
+
 function start() {
   console.log("Request handler 'start' was called.");
   trigger_process();
@@ -17,7 +19,7 @@ function trigger_process(process_url, input_params) {
 
 var rmp_login = "yokoi.shinya@jp.fujitsu.com";
 var rmp_password = "yokoi123";
-var auth='Basic '+base64encode(rmp_login+':'+rmp_password);
+var auth='Basic '+Base64.base64encode(rmp_login+':'+rmp_password);
 
 var xml_input_params = "<?xml version='1.0' encoding='UTF-8'?><feed xmlns='http://www.w3.org/2005/Atom'                             xml:base='https://live.runmyprocess.jp/'><entry><category term='initial' /><content type='xml'>" + JSON.stringify(input_params) + "</content></entry></feed>";
 

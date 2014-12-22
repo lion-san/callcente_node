@@ -1,3 +1,4 @@
+/// <reference path="typings/node/node.d.ts" />
 function route(handle, pathname) {
   console.log("About to route a request for " + pathname);
 

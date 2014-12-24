@@ -56,3 +56,5 @@ function base64decode(s)
   }
   return t;
 }
+
+exports.base64encode = base64encode;

@@ -52,6 +52,9 @@ function request(req) {
     language: 'ja-jp'
   };
   
+  //Push number?
+  var push = "0";
+  
   //パラメータの処理
   if(req.method=='POST') {
     var body='';
@@ -60,26 +63,32 @@ function request(req) {
     });
     req.on('end',function(){             
       var POST =  qs.parse(body);
-      console.log(POST);
-      //要件を伺うメッセージ
-      if(POST.Digits == "1") {
-        twiRes.say('ロボジーのお問い合わせですね。ご用件をどうぞ。', opt)
-        .record({timeout:10,
-                 finishOnKey:'#',
-                 action:'./runMyProcess'});
-        return twiRes.toString();
-      } else if(POST.Digits == "2") {
-        twiRes.say('ロボジーご注文ですね。ご注文をどうぞ。', opt).redirect('./runMyProess')
-            .record({timeout:10,
-                 finishOnKey:'#',
-                 action:'./runMyProcess'});
-        return twiRes.toString();
-      } else {
-        twiRes.say('恐れ入りますが、１か２をおしてください。', {voice: 'man', language: 'ja-jp'}).redirect('./start');
-        return twiRes.toString();
-      }
-
+      console.log("POST:" + POST);
+      push = POST.Digits
+      console.log("******************************");
+      console.log("push = " +push);
     });
+  }else {//Get request
+    twiRes.say('不正なリクエストです。', {voice: 'man', language: 'ja-jp'}).redirect('./start');
+    return twiRes.toString();
+  }
+  
+  console.log("---------------------------------");
+  console.log("push = " +push);
+  
+    //要件を伺うメッセージ
+  if(push == "1") {
+    twiRes.say('ロボジーのお問い合わせですね。ご用件をどうぞ。', opt)
+    .record({timeout:10,
+             finishOnKey:'#',
+             action:'./runMyProcess'});
+  } else if(push == "2") {
+    twiRes.say('ロボジーご注文ですね。ご注文をどうぞ。', opt).redirect('./runMyProess')
+        .record({timeout:10,
+             finishOnKey:'#',
+             action:'./runMyProcess'});
+  } else {
+    twiRes.say('恐れ入りますが、１か２をおしてください。', {voice: 'man', language: 'ja-jp'}).redirect('./start');
   }
 
   return twiRes.toString();

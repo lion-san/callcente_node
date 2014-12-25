@@ -121,13 +121,18 @@ function callBackToCustomer(req) {
   var callno = req.query.phoneno;
   console.log("Call from:"+callno);
   
+  var msg = req.query.msg;
+  console.log("Callback msg:"+msg);
+  
+  var voice = req.query.voice;
+  
   var client = twilio(
     'AC61e6d70fd202e5c5776168bc1b6165b6',
     '7e2833938114457766013c26310446bc');
   client.makeCall({
     from: '+81-50-3131-8520',    /* input your twilio number */
     to: callno,      /* input validated number, if trial */
-    url: 'http://callcenter-node.azurewebsites.net/callbackmsg'
+    url: 'http://callcenter-node.azurewebsites.net/callbackmsg?msg='+encodeURIComponent(msg)+'&voice='+voice+'.mp3'
   }, function(error, data) {
     console.log('makeCall error:' + error);
   });
@@ -142,7 +147,10 @@ function callBackToCustomer(req) {
   console.log("Request handler 'callBackMsg' was called.");
   
   //RunMyProcessへのメッセージ取得処理
-  var msg = 'ロボジーはいま、出張中なので、返事ができません。だめよ、だめだめ。';
+  var msg = req.query.msg;
+  console.log("Reply msg:"+msg);
+  
+  var voice = req.query.voice;
   
    //For response
   var twiRes = twilio.TwimlResponse();
@@ -151,8 +159,8 @@ function callBackToCustomer(req) {
     language: 'ja-jp'};
   
  
-   //受付ました
-   twiRes.say(msg, opt);
+   //コールバックしました
+   twiRes.say(msg, opt).play(voice);
   
   return twiRes.toString();
  }
@@ -170,7 +178,6 @@ var rmp_login = "yokoi.shinya@jp.fujitsu.com";
 var rmp_password = "yokoi123";
 var auth='Basic '+Base64.base64encode(rmp_login+':'+rmp_password);
 
-
 var xml_input_params = "<?xml version='1.0' encoding='UTF-8'?><feed xmlns='http://www.w3.org/2005/Atom'                             xml:base='https://live.runmyprocess.jp/'><entry><category term='initial' /><content type='xml'>" + JSON.stringify(input_params) + "</content></entry></feed>";
 
 var xhr = new XMLHttpRequest();
@@ -187,29 +194,12 @@ xhr.setRequestHeader('Content-Type', 'application/xml+atom');
 //送信データ
 xhr.send(xml_input_params);
 
-//ステータス
-if (xhr.status == 200) {
-  success();
-}else{
-  error();
-}
-
-/*
- $.ajax({
- type : "POST",
- url : process_url,
- data : xml_input_params,
- cache : false,
- async : false,
- dataType : "json",
- beforeSend : function (xhr) {
- xhr.setRequestHeader('Authorization', auth);
- xhr.setRequestHeader('Content-Type', 'application/xml+atom');
- },
- success : parse_result,
- error : popup_ko
- });
- */
+  //ステータス
+  if (xhr.status == 200) {
+    success();
+  }else{
+    error();
+  }
 }
 
 //For sucess

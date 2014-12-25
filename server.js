@@ -3,7 +3,7 @@ var http = require("http");
 var express = require('express');
 var url = require("url");
 
-function start(route, handle) {
+/*function start(route, handle) {
   function onRequest(request, response) {
     var pathname = url.parse(request.url).pathname;
     console.log("Request for " + pathname + " received.");
@@ -20,4 +20,12 @@ function start(route, handle) {
   console.log("Server has started.");
 }
 
-exports.start = start;
+exports.start = start;*/
+
+var app = express.createServer();
+
+app.get('/', function(req, res){
+  res.send('Hello World');
+});
+
+app.listen(process.env.PORT);;

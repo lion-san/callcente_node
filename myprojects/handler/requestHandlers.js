@@ -117,7 +117,9 @@ function runMyProcess(req) {
 function callBackToCustomer(req) {
   console.log("Request handler 'callBackToCustomer' was called.");
   
-  var callno = req.body.phoneno;
+  //Getで取得(微妙だが)
+  var callno = req.query.phoneno;
+  console.log("Call from:"+callno);
   
   var client = twilio(
     'AC61e6d70fd202e5c5776168bc1b6165b6',
@@ -125,9 +127,9 @@ function callBackToCustomer(req) {
   client.makeCall({
     from: '+81-50-3131-8520',    /* input your twilio number */
     to: callno,      /* input validated number, if trial */
-    url: './callbackmsg'
+    url: 'http://callcenter-node.azurewebsites.net/callbackmsg'
   }, function(error, data) {
-    console.log('makeCall error');
+    console.log('makeCall error:' + error);
   });
   
   return "電話をかけました！";
@@ -140,7 +142,7 @@ function callBackToCustomer(req) {
   console.log("Request handler 'callBackMsg' was called.");
   
   //RunMyProcessへのメッセージ取得処理
-  var msg = 'ロボジーはいま、出張中なので、返事ができません。だめよ～だめだめ。';
+  var msg = 'ロボジーはいま、出張中なので、返事ができません。だめよ、だめだめ。';
   
    //For response
   var twiRes = twilio.TwimlResponse();
